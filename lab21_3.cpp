@@ -8,7 +8,10 @@
 using namespace std;
 
 struct student{
-
+	string name;
+	int id;
+	char gender;
+	float gpa;
     //Define struct student with four member (name ,id , gender, gpa);
     
 };
@@ -20,7 +23,7 @@ struct course{
 	vector<student *> student_list;
 };
 
-student * findstudent(vector<student> allstudents,int key){ //There is something wrong in this line.
+student * findstudent(vector<student> &allstudents,int key){ //There is something wrong in this line.
 	for(unsigned int i = 0; i < allstudents.size(); i++){
 		if(allstudents[i].id  == key) return &allstudents[i];
 	}
@@ -65,8 +68,21 @@ int main(){
 		student s; 
 		
 		//Use sscanf() to split the values in textline and assign those values to the members of struct s;
+		int start = 0, end = 0;
+		for(int i = 0; i < 4; i++){
+			end = textline.find_first_of(',', start);
+			if(i == 0) s.name = textline.substr(start, end);
+			if(i == 1) s.id = atoi(textline.substr(start, end).c_str());
+			if(i == 2) s.gender = textline[end-1];
+			if(i == 3){
+				end = textline.find_first_of('\n');
+				s.gpa = atof(textline.substr(start, end).c_str());
+			}
+			start = end+1;
+		}
+		// sscanf() just break down for me. I try it for like 4 hours already. When it's can run on my computer the checking system desire to coredump;
 
-		allstudents.push_back(s); 		
+		allstudents.push_back(s);
 	}
 	
 	int state = 1;
@@ -85,7 +101,7 @@ int main(){
 			}else{
 			
 			    //Append (push_back) textline to lecture_list[] of the recently added course in allcourses[];
-			    
+				allcourses[allcourses.size()-1].lecture_list.push_back(textline);
 			}			
 		}else{
 			if(textline == "---------------------------------------"){
@@ -94,7 +110,7 @@ int main(){
 				student *p = findstudent(allstudents,atof(textline.c_str()));
 				
 				//Append (push_back) p to student_list of the recently added course in allcourses[];
-				
+				allcourses[allcourses.size()-1].student_list.push_back(p);	
 			}
 		}
 	}
